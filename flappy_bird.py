@@ -197,14 +197,14 @@ class Base:
 
 ##########################################################################
 
-def draw_window(win, bird, pipes, base):   #setting up the window
+def draw_window(win, bird, pipes, base, score):   #setting up the window
 	win.blit(BG_IMG, (0,0))
 
 	for pipe in pipes:
 		pipe.draw(win)
 
-	#text = STAT_FONT.render('Score: ' + str(score), 1, (255, 255, 255))
-	#win.blit(text, (WIN_WIDTH - 10 - text.get_width()))
+	text = STAT_FONT.render('Score: ' + str(score), 1, (255, 255, 255))
+	win.blit(text, (WIN_WIDTH - 10 - text.get_width(), 10))
 
 	base.draw(win)
 
@@ -213,10 +213,21 @@ def draw_window(win, bird, pipes, base):   #setting up the window
 
 ##########################################################################
 
+#Inputs <-- Bird Y, Top Pipe, Bottom Pipe
+#Outpus <-- Jump or not
+#Activation Function <-- TanH (-1, [don't jump] 0, [jump 1]) (hyperbolic Tangent function)
+#Population Size <-- 100
+#Fitness Function <-- Every frame advancement =  + 1 fitness
+#Max genertaions <-- 30
+
+
+
+
+
 def main():
 	bird = Bird(230, 350)
 	base = Base(FLOOR)
-	pipes = [Pipe(630)]
+	pipes = [Pipe(600)]
 	win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 	clock = pygame.time.Clock()  #setting the frame rate of the game
 
@@ -224,7 +235,7 @@ def main():
 
 	run = True
 	while run:  
-		clock.tick(50)                           # the Game loop. Runs till you hit something
+		clock.tick(30)                           # the Game loop. Runs till you hit something
 		for event in pygame.event.get():
 			print(event.type)                   # Keeps track of clicks
 			if event.type == pygame.QUIT:
@@ -234,14 +245,7 @@ def main():
 				if event.key == pygame.K_SPACE:
 					bird.do_jump()              
 
-
-		#keys = pygame.key.get_pressed()
-
 		bird.move()
-
-		
-
-		# print(event.type)
 
 		# This loop checks if the bird collides with the pipe, also removes the pipe to the remove list
 		# if when the pipe reaches the end of the screen. the 3rd if statement checks if the bird has passed
@@ -269,12 +273,13 @@ def main():
 		for r in remove:
 			pipes.remove(r)
 
+
 		if bird.y + bird.img.get_height() >= 730:
 			pass
 
 		base.move()
 
-		draw_window(win, bird, pipes, base)
+		draw_window(win, bird, pipes, base, score)
 
 	pygame.quit()
 	quit()
@@ -282,6 +287,27 @@ def main():
 ##########################################################################
 
 main()
+
+##########################################################################
+
+# def run(config_path):
+# 	config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction,     #pulls configurations from NEAT config file
+# 					neat.DefaultSpeciesSet, neat.DefaultStagnation, config_path)
+
+# 	p = neat.Population(config)     #creates first population
+
+# 	p.add_reporter(neat.StdOutReporter(True))  #sets up a reporter in terminal
+# 	stats = neat.StatisticsReporter()
+# 	p.add_reporter(stats)
+
+# 	winner = p.run( ,50)  #setting fitness function with how many generations we're going to run
+
+
+
+# if __name__ == "__main__":                         #opens and reads the neat config file from local directory
+# 	local_dir = os.path.dirname(__file__)
+# 	config_path = os.path.join(local_dir, 'NEAT-Configuration.txt')
+# 	run(config_path)
 
 
 
